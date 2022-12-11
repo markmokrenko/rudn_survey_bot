@@ -1,6 +1,6 @@
 import sqlite3
 from create_bot import bot
-# from keyboards.client_keyboards import delete_keyboard
+import pandas as pd
 
 def sql_start():
     global base, cur
@@ -43,6 +43,10 @@ async def add_research(state):
     async with state.proxy() as data:
         cur.execute('INSERT INTO cases VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(data.values()))
         base.commit()
+
+def download_database():
+    df = pd.read_sql('SELECT * FROM cases', base)
+    df.to_excel(r'temp/result.xlsx', index=False)
 
 #
 #

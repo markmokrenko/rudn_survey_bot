@@ -14,6 +14,15 @@ async def im_admin(message: types.Message):
         await message.answer('У вас нет прав доступа, обратитесь к администратору')
         await message.delete()
 
+async def download_cases_table(callback: types.CallbackQuery):
+    if callback.from_user.username in db.show_admins_usernames():
+        db.download_database()
+        with open(r'temp/result.xlsx', 'rb') as result:
+            await callback.message.answer_document(result)
+    else:
+        await callback.message.answer('У вас нет прав доступа, обратитесь к администратору')
+
+
 
 '''Запуск машины состояний для загрузки нового пользователя в БД'''
 
@@ -78,6 +87,7 @@ async def add_new_admin_username(message: types.Message,
 
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(im_admin, text='Я администратор')
+    dp.register_callback_query_handler(download_cases_table, text='DownloadDB')
     dp.register_callback_query_handler(add_new_user_start, text='Add_user', state=None)
     dp.register_message_handler(add_new_user_username, state=FSMAddUser.username)
     dp.register_message_handler(add_new_user_depatrment, state=FSMAddUser.department)
