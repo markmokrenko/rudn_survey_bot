@@ -10,6 +10,9 @@ from database import db
 async def im_admin(message: types.Message):
     if message.from_user.username in db.show_admins_usernames():
         await message.answer('Добро пожаловать, администратор', reply_markup=im_admin_keyboard)
+    else:
+        await message.answer('У вас нет прав доступа, обратитесь к администратору')
+        await message.delete()
 
 
 '''Запуск машины состояний для загрузки нового пользователя в БД'''

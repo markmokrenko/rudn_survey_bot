@@ -66,6 +66,7 @@ async def add_ages(message: types.Message,
             data['ages'] = int(message.text)
         except Exception:
             await message.reply('Введите число')
+            data['ages'] = int(message.text)
     await FSMTestResearch1.next()
     await message.answer('Доступен ли пациент для постоянного контроля?',
                          reply_markup=choose_patient_accessibility_keyboard)
