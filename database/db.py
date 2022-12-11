@@ -51,14 +51,14 @@ async def add_admin(state):
         base.commit()
 
 
-async def add_research(state):
+async def add_research_for_test1(state):
     '''Функция добавляет результаты опроса test_research_1 по запросу пользователя'''
     async with state.proxy() as data:
         cur.execute('INSERT INTO test_research_1 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(data.values()))
         base.commit()
 
 
-def download_database():
+def download_database_test_research_1():
     '''Функция выгружает БД в виде файла .xlsx'''
     df = pd.read_sql('SELECT * FROM test_research_1', base)
     df.to_excel(r'temp/result.xlsx', index=False)

@@ -24,7 +24,7 @@ async def download_tables(callback: types.CallbackQuery):
 
 async def download_test_research_1_table(callback: types.CallbackQuery):
     if callback.from_user.username in db.show_admins_usernames():
-        db.download_database()
+        db.download_database_test_research_1()
         with open(r'temp/result.xlsx', 'rb') as result:
             await callback.message.answer_document(result)
     else:

@@ -1,8 +1,6 @@
 from aiogram import types, Dispatcher
-from create_bot import dp, bot
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.dispatcher.filters import Text
 from keyboards.test_research_1_keyboard import choose_patient_sex_keyboard, choose_patient_accessibility_keyboard, \
     choose_patient_occupation_keyboard, choose_ischemic_heart_disease_keyboard, \
     choose_arterial_hypertension_stage_keyboard, cancelling_keyboard
@@ -98,6 +96,7 @@ async def add_accessibility(callback: types.CallbackQuery,
     await FSMTestResearch1.next()
     await callback.message.answer('Укажите особенности профессиональной деятельности:',
                                   reply_markup=choose_patient_occupation_keyboard)
+    await callback.answer()
 
 
 async def add_occupation(callback: types.CallbackQuery,
@@ -126,7 +125,7 @@ async def add_arterial_hypertension_stage(callback: types.CallbackQuery,
         data['arterial_hypertension_stage'] = callback.data
     await callback.answer()
     try:
-        await db.add_research(state)
+        await db.add_research_for_test1(state)
         await callback.message.answer('Выбор сохранен')
     except Exception:
         await callback.message.answer('Произошла ошибка, данные не сохранены')
