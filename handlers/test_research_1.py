@@ -58,6 +58,7 @@ async def add_date_of_birth(message: types.Message,
         try:
             data['date_of_birth'] = datetime.datetime.strptime(message.text, "%d.%m.%Y")
         except:
+            # выполняется проверка на соответствие шаблону даты, дата конвертируется
             await message.reply('Введите дату рождения пациента в формате ДД.ММ.ГГГГ:')
             data['date_of_birth'] = datetime.datetime.strptime(message.text, "%d.%m.%Y")
     await FSMTestResearch1.next()
@@ -68,6 +69,7 @@ async def add_ages(message: types.Message,
                    state: FSMContext):
     async with state.proxy() as data:
         try:
+            # проверка на число
             data['ages'] = int(message.text)
         except Exception:
             await message.reply('Введите число')
