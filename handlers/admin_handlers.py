@@ -1,7 +1,7 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
 from keyboards.main_keyboard import main_menu
-from keyboards.admin_keyboards import im_admin_keyboard
+from keyboards.admin_keyboards import im_admin_keyboard, choose_db_for_download_keyboard
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from database import db
@@ -16,13 +16,20 @@ async def im_admin(message: types.Message):
         await message.delete()
 
 
-async def download_cases_table(callback: types.CallbackQuery):
+async def download_tables(callback: types.CallbackQuery):
+    if callback.from_user.username in db.show_admins_usernames():
+        await callback.message.answer('Выберите базу данных для загрузки:', reply_markup=choose_db_for_download_keyboard)
+        await callback.answer()
+
+
+async def download_test_research_1_table(callback: types.CallbackQuery):
     if callback.from_user.username in db.show_admins_usernames():
         db.download_database()
         with open(r'temp/result.xlsx', 'rb') as result:
             await callback.message.answer_document(result)
     else:
         await callback.message.answer('У вас нет прав доступа, обратитесь к администратору')
+    await callback.answer()
 
 
 '''Запуск машины состояний для загрузки нового пользователя в БД'''
@@ -88,7 +95,8 @@ async def add_new_admin_username(message: types.Message,
 
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(im_admin, text='Я администратор')
-    dp.register_callback_query_handler(download_cases_table, text='DownloadDB')
+    dp.register_callback_query_handler(download_tables, text='DownloadDB')
+    dp.register_callback_query_handler(download_test_research_1_table, text='1_download')
     dp.register_callback_query_handler(add_new_user_start, text='Add_user', state=None)
     dp.register_message_handler(add_new_user_username, state=FSMAddUser.username)
     dp.register_message_handler(add_new_user_depatrment, state=FSMAddUser.department)
