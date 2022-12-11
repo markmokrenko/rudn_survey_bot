@@ -39,6 +39,11 @@ async def add_admin(state):
         cur.execute('INSERT INTO admins VALUES(?)', tuple(data.values()))
         base.commit()
 
+async def add_research(state):
+    async with state.proxy() as data:
+        cur.execute('INSERT INTO cases VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(data.values()))
+        base.commit()
+
 #
 #
 # async def sql_add_users_flat(state):

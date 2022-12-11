@@ -24,6 +24,7 @@ async def add_new_user_start(callback: types.CallbackQuery):
     if callback.from_user.username in db.show_admins_usernames():
         await FSMAddUser.username.set()
         await callback.message.answer('Введите имя пользователя:')
+        await callback.answer()
 
 
 async def add_new_user_username(message: types.Message,
@@ -57,6 +58,7 @@ async def add_new_admin_start(callback: types.CallbackQuery):
     if callback.from_user.username in db.show_admins_usernames():
         await FSMAddAdmin.username.set()
         await callback.message.answer('Введите имя администратора:')
+        await callback.answer()
 
 
 async def add_new_admin_username(message: types.Message,
