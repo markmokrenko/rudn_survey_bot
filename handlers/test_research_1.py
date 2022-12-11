@@ -6,6 +6,7 @@ from aiogram.dispatcher.filters import Text
 from keyboards.test_research_1_keyboard import choose_patient_sex_keyboard, choose_patient_accessibility_keyboard, \
     choose_patient_occupation_keyboard, choose_ischemic_heart_disease_keyboard, choose_arterial_hypertension_stage_keyboard
 from database import db
+import datetime
 
 '''Запуск машины состояний для тестового исследования 1'''
 
@@ -54,7 +55,11 @@ async def add_sex(callback: types.CallbackQuery,
 async def add_date_of_birth(message: types.Message,
                             state: FSMContext):
     async with state.proxy() as data:
-        data['date_of_birth'] = message.text
+        try:
+            data['date_of_birth'] = datetime.datetime.strptime(message.text, "%d.%m.%Y")
+        except:
+            await message.reply('Введите дату рождения пациента в формате ДД.ММ.ГГГГ:')
+            data['date_of_birth'] = datetime.datetime.strptime(message.text, "%d.%m.%Y")
     await FSMTestResearch1.next()
     await message.answer('Введите возраст пациента на момент операции:')
 
