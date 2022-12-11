@@ -9,10 +9,12 @@ from database import db
 
 async def im_admin(message: types.Message):
     if message.from_user.username in db.show_admins_usernames():
-        await message.answer('Добро пожаловать, администратор', reply_markup=im_admin_keyboard)
+        await message.answer(f'Добро пожаловать, администратор {message.from_user.first_name}',
+                             reply_markup=im_admin_keyboard)
     else:
         await message.answer('У вас нет прав доступа, обратитесь к администратору')
         await message.delete()
+
 
 async def download_cases_table(callback: types.CallbackQuery):
     if callback.from_user.username in db.show_admins_usernames():
@@ -21,7 +23,6 @@ async def download_cases_table(callback: types.CallbackQuery):
             await callback.message.answer_document(result)
     else:
         await callback.message.answer('У вас нет прав доступа, обратитесь к администратору')
-
 
 
 '''Запуск машины состояний для загрузки нового пользователя в БД'''

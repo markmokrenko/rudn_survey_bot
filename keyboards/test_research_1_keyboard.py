@@ -2,13 +2,15 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 
 '''Клавиатура пол пациента'''
 choose_patient_sex_buttons = [InlineKeyboardButton(text='Мужской', callback_data='мужской'),
-                              InlineKeyboardButton(text='Женский', callback_data='женский')]
+                              InlineKeyboardButton(text='Женский', callback_data='женский'),
+                              InlineKeyboardButton(text='Отмена', callback_data='cancel')]
 choose_patient_sex_keyboard = InlineKeyboardMarkup(row_width=1)
 choose_patient_sex_keyboard.add(*choose_patient_sex_buttons)
 
 '''Клавиатура доступность пациента для контроля'''
 choose_patient_accessibility_buttons = [InlineKeyboardButton(text='Да', callback_data='да'),
-                                        InlineKeyboardButton(text='Нет', callback_data='нет')]
+                                        InlineKeyboardButton(text='Нет', callback_data='нет'),
+                                        InlineKeyboardButton(text='Отмена', callback_data='cancel')]
 choose_patient_accessibility_keyboard = InlineKeyboardMarkup(row_width=1)
 choose_patient_accessibility_keyboard.add(*choose_patient_accessibility_buttons)
 
@@ -19,7 +21,8 @@ choose_patient_occupation_buttons = [InlineKeyboardButton(text='Без особ�
                                      InlineKeyboardButton(text='Лучевая нагрузка',
                                                           callback_data='лучевая нагрузка'),
                                      InlineKeyboardButton(text='Физическая нагрузка',
-                                                          callback_data='физическая нагрузка')]
+                                                          callback_data='физическая нагрузка'),
+                                     InlineKeyboardButton(text='Отмена', callback_data='cancel')]
 choose_patient_occupation_keyboard = InlineKeyboardMarkup(row_width=1)
 choose_patient_occupation_keyboard.add(*choose_patient_occupation_buttons)
 
@@ -32,7 +35,8 @@ choose_ischemic_heart_disease_buttons = [InlineKeyboardButton(text='Не наб�
                                          InlineKeyboardButton(text='Сердечная недост.',
                                                               callback_data='сердечная недост'),
                                          InlineKeyboardButton(text='Стаб. стенокард.',
-                                                              callback_data='стаб стенокард')
+                                                              callback_data='стаб стенокард'),
+                                         InlineKeyboardButton(text='Отмена', callback_data='cancel')
                                          ]
 choose_ischemic_heart_disease_keyboard = InlineKeyboardMarkup(row_width=1)
 choose_ischemic_heart_disease_keyboard.add(*choose_ischemic_heart_disease_buttons)
@@ -46,7 +50,13 @@ choose_arterial_hypertension_stage_buttons = [InlineKeyboardButton(text='Нор�
                                               InlineKeyboardButton(text='2 ст.',
                                                                    callback_data='2 ст'),
                                               InlineKeyboardButton(text='Ниже нормы',
-                                                                   callback_data='ниже нормы')
+                                                                   callback_data='ниже нормы'),
+                                              InlineKeyboardButton(text='Отмена', callback_data='cancel')
                                               ]
 choose_arterial_hypertension_stage_keyboard = InlineKeyboardMarkup(row_width=1)
 choose_arterial_hypertension_stage_keyboard.add(*choose_arterial_hypertension_stage_buttons)
+
+'''Клавиатура отмена'''
+cancelling_button = InlineKeyboardButton(text='Отмена', callback_data='cancel')
+cancelling_keyboard = InlineKeyboardMarkup(row_width=1)
+cancelling_keyboard.add(cancelling_button)

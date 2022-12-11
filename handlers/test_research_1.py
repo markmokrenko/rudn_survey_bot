@@ -4,7 +4,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.filters import Text
 from keyboards.test_research_1_keyboard import choose_patient_sex_keyboard, choose_patient_accessibility_keyboard, \
-    choose_patient_occupation_keyboard, choose_ischemic_heart_disease_keyboard, choose_arterial_hypertension_stage_keyboard
+    choose_patient_occupation_keyboard, choose_ischemic_heart_disease_keyboard, \
+    choose_arterial_hypertension_stage_keyboard, cancelling_keyboard
 from database import db
 import datetime
 
@@ -28,10 +29,20 @@ async def test_research_1_start(callback: types.CallbackQuery):
         await callback.message.answer('Данное исследование создано с целью тестирования работы бота')
         await callback.message.answer('Введите код клинического случая.\nКод клинического случая, в формате ККНННН,\n'
                                       'где КК- 2 первых символа организации,\nНННН-порядковый номер пациента, например'
-                                      ' для Клиники Долгалева -KD0001, KD0002 и т.д.\nтакже вносится в кодификатор')
+                                      ' для Клиники Долгалева -KD0001, KD0002 и т.д.\nтакже вносится в кодификатор',
+                                      reply_markup=cancelling_keyboard)
         await callback.answer()
     else:
         await callback.message.answer('У вас нет прав доступа, обратитесь к администратору')
+
+
+async def cancelling(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+    await state.finish()
+    await callback.message.answer('Анкетирование остановлено. Данные не сохранены.')
+    await callback.answer()
 
 
 async def add_patient_number(message: types.Message,
@@ -48,7 +59,8 @@ async def add_sex(callback: types.CallbackQuery,
     async with state.proxy() as data:
         data['sex'] = callback.data
     await FSMTestResearch1.next()
-    await callback.message.answer('Введите дату рождения пациента в формате ДД.ММ.ГГГГ:')
+    await callback.message.answer('Введите дату рождения пациента в формате ДД.ММ.ГГГГ:',
+                                  reply_markup=cancelling_keyboard)
     await callback.answer()
 
 
@@ -59,10 +71,10 @@ async def add_date_of_birth(message: types.Message,
             data['date_of_birth'] = datetime.datetime.strptime(message.text, "%d.%m.%Y")
         except:
             # выполняется проверка на соответствие шаблону даты, дата конвертируется
-            await message.reply('Введите дату рождения пациента в формате ДД.ММ.ГГГГ:')
+            await message.reply('Дата введена неверно.\nВведите дату рождения пациента в формате ДД.ММ.ГГГГ:')
             data['date_of_birth'] = datetime.datetime.strptime(message.text, "%d.%m.%Y")
     await FSMTestResearch1.next()
-    await message.answer('Введите возраст пациента на момент операции:')
+    await message.answer('Введите возраст пациента на момент операции:', reply_markup=cancelling_keyboard)
 
 
 async def add_ages(message: types.Message,
@@ -99,7 +111,7 @@ async def add_occupation(callback: types.CallbackQuery,
 
 
 async def add_ischemic_heart_disease(callback: types.CallbackQuery,
-                         state: FSMContext):
+                                     state: FSMContext):
     async with state.proxy() as data:
         data['ischemic_heart_disease'] = callback.data
     await FSMTestResearch1.next()
@@ -107,8 +119,9 @@ async def add_ischemic_heart_disease(callback: types.CallbackQuery,
                                   reply_markup=choose_arterial_hypertension_stage_keyboard)
     await callback.answer()
 
+
 async def add_arterial_hypertension_stage(callback: types.CallbackQuery,
-                         state: FSMContext):
+                                          state: FSMContext):
     async with state.proxy() as data:
         data['arterial_hypertension_stage'] = callback.data
     await callback.answer()
@@ -119,13 +132,16 @@ async def add_arterial_hypertension_stage(callback: types.CallbackQuery,
         await callback.message.answer('Произошла ошибка, данные не сохранены')
     await state.finish()
 
+
 def register_handlers_test_research_1(dp: Dispatcher):
     dp.register_callback_query_handler(test_research_1_start, text='TestResearch1', state=None)
     dp.register_message_handler(add_patient_number, state=FSMTestResearch1.patient_number)
+    dp.register_callback_query_handler(cancelling, text='cancel', state='*')
     dp.register_callback_query_handler(add_sex, state=FSMTestResearch1.sex)
     dp.register_message_handler(add_date_of_birth, state=FSMTestResearch1.date_of_birth)
     dp.register_message_handler(add_ages, state=FSMTestResearch1.ages)
     dp.register_callback_query_handler(add_accessibility, state=FSMTestResearch1.accessibility)
     dp.register_callback_query_handler(add_occupation, state=FSMTestResearch1.occupation)
     dp.register_callback_query_handler(add_ischemic_heart_disease, state=FSMTestResearch1.ischemic_heart_disease)
-    dp.register_callback_query_handler(add_arterial_hypertension_stage, state=FSMTestResearch1.arterial_hypertension_stage)
+    dp.register_callback_query_handler(add_arterial_hypertension_stage,
+                                       state=FSMTestResearch1.arterial_hypertension_stage)

@@ -7,11 +7,14 @@ from database import db
 
 async def command_start_reply(message: types.Message):
     if message.from_user.username in db.show_users_usernames():
-        await message.answer('Этот бот создан для записи клинических случаев', reply_markup=main_menu)
+        await message.answer(
+            f'Здравствуйте, {message.from_user.first_name}.\nЭтот бот создан для записи клинических случаев',
+            reply_markup=main_menu)
         await message.delete()
     else:
         await message.answer('У вас нет прав доступа, обратитесь к администратору')
         await message.delete()
+
 
 async def help(message: types.Message):
     if message.from_user.username in db.show_users_usernames():
@@ -19,6 +22,7 @@ async def help(message: types.Message):
     else:
         await message.answer('У вас нет прав доступа, обратитесь к администратору')
         await message.delete()
+
 
 async def choose_research(message: types.Message):
     if message.from_user.username in db.show_users_usernames():
@@ -28,9 +32,7 @@ async def choose_research(message: types.Message):
         await message.delete()
 
 
-
-
-def register_handlers_user(dp : Dispatcher):
+def register_handlers_user(dp: Dispatcher):
     dp.register_message_handler(command_start_reply, commands=['start'])
     dp.register_message_handler(help, text='Помощь')
     dp.register_message_handler(choose_research, text='Добавить случай')
